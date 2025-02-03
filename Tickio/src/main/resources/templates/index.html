@@ -3,7 +3,13 @@
       th:replace="layout :: layout('Tickio - Home')">
     <!-- Define content fragment -->
     <div th:fragment="content">
-        <h1>Welcome to Tickio Ticketing System</h1>
-        <p>This is the main page of Tickio. Use the navigation bar above to log in or register.</p>
+        <div class="container text-center mt-5">
+            <h1 class="display-3 text-primary">Welcome to Tickio Ticketing System</h1>
+            <p class="lead text-muted">This is the main page of Tickio. Use the navigation bar above to log in or register.</p>
+            <div class="mt-4">
+                <a href="/login" class="btn btn-primary btn-lg mx-2">Login</a>
+                <a href="/register" class="btn btn-secondary btn-lg mx-2">Register</a>
+            </div>
+        </div>
     </div>
 </html>
