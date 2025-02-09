@@ -1,7 +1,11 @@
 package com.tickio.controllers;
 
 import com.tickio.models.LoginForm;
+import com.tickio.services.AuthenticationService;
+
 import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,6 +15,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
 public class LoginController {
+	
+	@Autowired
+	private AuthenticationService authService;
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
@@ -19,18 +26,14 @@ public class LoginController {
     }
     
     @PostMapping("/login")
-    public String processLogin(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
-                               BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            return "login";
-        }
-        // Emulated authentication logic (no database)
-        if ("user".equals(loginForm.getUsername()) && "password".equals(loginForm.getPassword())) {
-            model.addAttribute("username", loginForm.getUsername());
-            return "index"; // once "logged in", return to home page (or product page)
+    public String processLogin(@ModelAttribute("loginForm") LoginForm loginForm, Model model) {
+        if (authService.authenticate(loginForm.getUsername(), loginForm.getPassword())) {
+            model.addAttribute("message", "Login successful!");
+            return "redirect:/home";  // Redirect to home page after successful login
         } else {
-            bindingResult.reject("login.failed", "Invalid username or password.");
-            return "login";
+            model.addAttribute("error", "Invalid username or password");
+            return "login"; // Stay on login page with error message
         }
     }
+    
 }
