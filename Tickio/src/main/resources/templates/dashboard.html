@@ -1,70 +1,8 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout('Tickio - Dashboard')">
-
     <div th:fragment="content">
-        
-
-        <!-- Main Dashboard Layout -->
-        <div class="container mt-4">
-            <div class="row">
-                <!-- Sidebar for Navigation -->
-                <div class="col-md-3">
-                    <div class="list-group shadow">
-                        <a href="/dashboard" class="list-group-item list-group-item-action active">Dashboard</a>
-                        <a href="/tickets" class="list-group-item list-group-item-action">View Tickets</a>
-                        <a href="/tickets/new" class="list-group-item list-group-item-action">Create New Ticket</a>
-                        <a href="/settings" class="list-group-item list-group-item-action">Settings</a>
-                    </div>
-                </div>
-
-                <!-- Main Content -->
-                <div class="col-md-9">
-                    <div class="card shadow-lg">
-                        <div class="card-header bg-primary text-white">
-                            <h2>Welcome to Your Dashboard</h2>
-                        </div>
-
-                        <div class="card-body">
-                            <p class="lead">Manage your tickets and track progress.</p>
-
-                            <!-- Ticket Summary Stats -->
-                            <div class="row text-center">
-                                <div class="col-md-4">
-                                    <div class="card shadow-sm">
-                                        <div class="card-body">
-                                            <h5 class="text-primary">Open Tickets</h5>
-                                            <h3 th:text="${openTickets}">12</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card shadow-sm">
-                                        <div class="card-body">
-                                            <h5 class="text-success">Resolved Tickets</h5>
-                                            <h3 th:text="${resolvedTickets}">8</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card shadow-sm">
-                                        <div class="card-body">
-                                            <h5 class="text-danger">Pending Tickets</h5>
-                                            <h3 th:text="${pendingTickets}">5</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Quick Actions -->
-                            <div class="d-flex justify-content-center mt-4">
-                                <a href="/tickets" class="btn btn-primary mx-2">View Tickets</a>
-                                <a href="/tickets/new" class="btn btn-success mx-2">Create New Ticket</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h2>Welcome to Your Dashboard</h2>
+        <p>You are logged in as <span th:text="${username}"></span>.</p>
+        <a href="/tickets">View Tickets</a>
+        <a href="/logout" class="btn btn-danger">Logout</a>
     </div>
-
 </html>

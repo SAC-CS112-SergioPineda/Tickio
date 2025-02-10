@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout('Tickio - Dashboard')">
+    <div th:fragment="content">
+        <h2>Welcome to Your Dashboard</h2>
+        <p>You are logged in as <span th:text="${username}"></span>.</p>
+        <a href="/tickets">View Tickets</a>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
+</html>

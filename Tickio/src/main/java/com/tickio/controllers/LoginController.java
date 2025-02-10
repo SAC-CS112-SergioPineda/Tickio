@@ -1,45 +1,46 @@
 package com.tickio.controllers;
 
+
 import com.tickio.models.LoginForm;
+import com.tickio.services.AuthenticationService;
+import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
 public class LoginController {
 
+    private final AuthenticationService authService;
+
+    public LoginController(AuthenticationService authService) {
+        this.authService = authService;
+    }
+
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         model.addAttribute("loginForm", new LoginForm());
-        return "login"; // Renders login.html
+        return "login";  // resolves to login.html
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
-                        BindingResult result, HttpSession session) {
-        if (result.hasErrors()) {
+    public String processLogin(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
+                               BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
             return "login";
         }
 
-        // Hardcoded credentials (for now)
-        if ("admin".equals(loginForm.getUsername()) && "password".equals(loginForm.getPassword())) {
-            session.setAttribute("user", "admin"); // Store user in session
-            return "redirect:/dashboard"; // Redirect to user dashboard
+        // Use AuthenticationService instead of hardcoded logic
+        if (authService.authenticate(loginForm.getUsername(), loginForm.getPassword())) {
+            model.addAttribute("username", loginForm.getUsername());
+            return "dashboard"; // Redirect to dashboard after successful login
+        } else {
+            bindingResult.reject("login.failed", "Invalid username or password.");
+            return "login";
         }
-
-        result.rejectValue("password", "error.loginForm", "Invalid username or password.");
-        return "login";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // Clear session
-        return "redirect:/"; // Redirect to login page
     }
 }
+
