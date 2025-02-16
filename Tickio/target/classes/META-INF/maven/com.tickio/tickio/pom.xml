@@ -20,6 +20,21 @@
   </properties>
   
   <dependencies>
+  
+  <!-- Spring JDBC -->
+  	<dependency>
+  		<groupId>org.springframework.boot</groupId>
+  		<artifactId>spring-boot-starter-data-jdbc</artifactId>
+  	</dependency>
+  
+  <!-- MySQL Database -->
+  	<dependency>
+  	<groupId>mysql</groupId>
+  	<artifactId>mysql-connector-java</artifactId>
+  	<version>8.0.33</version>
+  	</dependency>
+  
+  
     <!-- Spring Web MVC -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

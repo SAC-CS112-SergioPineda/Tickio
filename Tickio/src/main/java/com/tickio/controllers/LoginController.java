@@ -1,6 +1,8 @@
 package com.tickio.controllers;
 
 import com.tickio.models.LoginForm;
+import com.tickio.services.UserService;
+import com.tickio.data.entity.UserEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,9 +12,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 public class LoginController {
+
+    private final UserService userService;
+
+    public LoginController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
@@ -27,9 +36,10 @@ public class LoginController {
             return "login";
         }
 
-        // Hardcoded credentials (for now)
-        if ("admin".equals(loginForm.getUsername()) && "password".equals(loginForm.getPassword())) {
-            session.setAttribute("user", "admin"); // Store user in session
+        Optional<UserEntity> user = userService.getUserByUsername(loginForm.getUsername());
+
+        if (user.isPresent() && user.get().getPassword().equals(loginForm.getPassword())) {
+            session.setAttribute("user", user.get().getUsername()); // Store user in session
             return "redirect:/dashboard"; // Redirect to user dashboard
         }
 

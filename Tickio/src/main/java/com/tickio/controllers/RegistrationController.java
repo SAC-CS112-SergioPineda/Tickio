@@ -1,31 +1,49 @@
 package com.tickio.controllers;
 
 import com.tickio.models.User;
-import javax.validation.Valid;
+import com.tickio.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.validation.Valid;
 
 @Controller
 public class RegistrationController {
 
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new User());
-        return "register";  // resolves to register.html
+    private final UserService userService;
+
+    public RegistrationController(UserService userService) {
+        this.userService = userService;
     }
-    
+
+    @GetMapping("/register")
+    public String showRegisterForm(Model model) 
+    {
+        model.addAttribute("user", new User());
+        return "register"; // Renders register.html
+    }
+
     @PostMapping("/register")
-    public String processRegistration(@Valid @ModelAttribute("user") User user,
-                                      BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
+    public String register(@Valid @ModelAttribute("user") User user,
+                           BindingResult result) 
+    {
+        if (result.hasErrors()) {
             return "register";
         }
-        // Simulate registration (e.g., log to console, show success message)
-        model.addAttribute("message", "Registration successful for " + user.getUsername());
-        return "index"; // return to home page; you could also create a success page
+
+        boolean success = userService.registerUser(user.getFirstName(), user.getLastName(), user.getEmail(),
+                user.getPhone(), user.getUsername(), user.getPassword());
+
+        if (!success) 
+        {
+            result.rejectValue("username", "error.user", "Username or email already taken.");
+            return "register";
+        }
+
+        return "redirect:/login";
     }
 }
