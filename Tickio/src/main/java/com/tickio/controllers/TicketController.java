@@ -1,52 +1,57 @@
 package com.tickio.controllers;
 
-import com.tickio.models.Ticket;
+import com.tickio.data.entity.TicketEntity;
 import com.tickio.services.TicketService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.format.DateTimeFormatter;
+import javax.servlet.http.HttpSession;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@RequestMapping("/tickets")  // ✅ This ensures all endpoints start with /tickets
 public class TicketController {
 
-    private final TicketService ticketService; // Declare service instance
+    private final TicketService ticketService;
 
-    // Constructor-based Dependency Injection
     public TicketController(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
-    // Display the list of submitted tickets
-    @GetMapping("/tickets")
-    public String showTickets(Model model) {
-        List<Ticket> tickets = ticketService.getAllTickets(); // Fetch tickets
+    // ✅ List all tickets for the logged-in user
+    @GetMapping
+    public String listUserTickets(HttpSession session, Model model) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return "redirect:/login"; // Redirect if not logged in
+
+        List<TicketEntity> tickets = ticketService.getUserTickets(userId);
         
-     // Format date for each ticket
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        for (Ticket ticket : tickets) {
-            ticket.setFormattedDate(ticket.getDateSubmitted().format(formatter));
+        if (tickets == null) { // ✅ Fix: Ensure Thymeleaf never gets null
+            tickets = new ArrayList<>();
         }
-        
+
         model.addAttribute("tickets", tickets);
-        return "tickets"; // Thymeleaf template path
+        return "tickets"; // ✅ Ensure this matches the filename tickets.html
     }
 
-    // Show ticket creation form
-    @GetMapping("/tickets/new")
+
+    // ✅ Display the "Create Ticket" form
+    @GetMapping("/new")
     public String showCreateTicketForm(Model model) {
-        model.addAttribute("ticket", new Ticket());
-        return "create_ticket"; // Thymeleaf form template
+        model.addAttribute("ticket", new TicketEntity());
+        return "create_ticket"; // ✅ Ensure this matches create_ticket.html
     }
 
-    // Handle new ticket submission
-    @PostMapping("/tickets")
-    public String createTicket(@ModelAttribute Ticket ticket) {
-        ticketService.addTicket(ticket); // Save ticket
-        return "redirect:/tickets"; // Redirect to ticket list
+    // ✅ Handle form submission for creating a ticket
+    @PostMapping
+    public String createTicket(@ModelAttribute TicketEntity ticket, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return "redirect:/login";
+
+        ticketService.createTicket(userId, ticket.getTitle(), ticket.getDescription(), ticket.getPriority());
+        return "redirect:/tickets"; // ✅ Redirects back to tickets list
     }
 }

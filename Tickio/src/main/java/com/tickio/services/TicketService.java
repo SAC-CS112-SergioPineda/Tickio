@@ -1,23 +1,28 @@
 package com.tickio.services;
 
-import com.tickio.models.Ticket;
+import com.tickio.data.entity.TicketEntity;
+import com.tickio.data.repository.TicketRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
-@Service  
+@Service
 public class TicketService {
 
-    private final List<Ticket> ticketList = new ArrayList<>();
-    private Long ticketIdCounter = 1L; // Simulated database auto-increment
+    private final TicketRepository ticketRepository;
 
-    public List<Ticket> getAllTickets() {
-        return ticketList;
+    public TicketService(TicketRepository ticketRepository) {
+        this.ticketRepository = ticketRepository;
     }
 
-    public void addTicket(Ticket ticket) {
-        ticket.setId(ticketIdCounter++);
-        ticketList.add(ticket);
+    // Retrieve all tickets for a specific user
+    public List<TicketEntity> getUserTickets(Long userId) {
+        return ticketRepository.findByUserId(userId);
+    }
+
+    // Create a new ticket for a user
+    public TicketEntity createTicket(Long userId, String title, String description, String priority) {
+        TicketEntity ticket = new TicketEntity(userId, title, description, priority);
+        return ticketRepository.save(ticket);
     }
 }
+

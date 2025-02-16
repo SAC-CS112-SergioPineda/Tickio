@@ -23,15 +23,17 @@ public class LoginController {
         this.userService = userService;
     }
 
+    // Display login form
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         model.addAttribute("loginForm", new LoginForm());
-        return "login"; // Renders login.html
+        return "login"; // Loads login.html
     }
 
+    // Handle login submission
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
-                        BindingResult result, HttpSession session) {
+                        BindingResult result, HttpSession session, Model model) {
         if (result.hasErrors()) {
             return "login";
         }
@@ -39,17 +41,19 @@ public class LoginController {
         Optional<UserEntity> user = userService.getUserByUsername(loginForm.getUsername());
 
         if (user.isPresent() && user.get().getPassword().equals(loginForm.getPassword())) {
-            session.setAttribute("user", user.get().getUsername()); // Store user in session
+            session.setAttribute("userId", user.get().getId()); // Store user ID in session
+            session.setAttribute("username", user.get().getUsername()); // Store username in session
             return "redirect:/dashboard"; // Redirect to user dashboard
         }
 
-        result.rejectValue("password", "error.loginForm", "Invalid username or password.");
+        model.addAttribute("error", "Invalid username or password.");
         return "login";
     }
 
+    // Handle user logout
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // Clear session
+        session.invalidate(); // Destroy session
         return "redirect:/"; // Redirect to login page
     }
 }
