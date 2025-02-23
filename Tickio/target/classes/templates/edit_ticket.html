@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Edit Ticket')}">
+<head>
+    <title>Edit Ticket</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mt-4">
+            <h2 class="text-center">Edit Ticket</h2>
+            <form action="/tickets/update" method="post" class="mt-4">
+                <input type="hidden" name="id" th:value="${ticket.id}" />
+                <input type="hidden" name="userId" th:value="${ticket.userId}" />
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <input type="text" id="title" name="title" class="form-control" th:value="${ticket.title}" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" required th:text="${ticket.description}"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="priority" class="form-label">Priority:</label>
+                    <select id="priority" name="priority" class="form-select">
+                        <option value="LOW" th:selected="${ticket.priority == 'Low'}">Low</option>
+                        <option value="MEDIUM" th:selected="${ticket.priority == 'Medium'}">Medium</option>
+                        <option value="HIGH" th:selected="${ticket.priority == 'High'}">High</option>
+                    </select>
+                </div>
+
+                <!-- Only display the status field and delete button if the user is an ADMIN -->
+                <div th:if="${#session.getAttribute('role') == 'ADMIN'}">
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status:</label>
+                        <select id="status" name="status" class="form-select">
+                            <option value="Open" th:selected="${ticket.status == 'Open'}">Open</option>
+                            <option value="In Progress" th:selected="${ticket.status == 'In Progress'}">In Progress</option>
+                            <option value="Closed" th:selected="${ticket.status == 'Closed'}">Closed</option>
+                        </select>
+                    </div>
+                    <div class="text-center mb-3">
+                        <a th:href="@{/tickets/delete/{id}(id=${ticket.id})}" 
+                           class="btn btn-danger" 
+                           onclick="return confirm('Are you sure you want to delete this ticket?');">
+                            Delete Ticket
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Update Ticket</button>
+                    <a href="/tickets" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

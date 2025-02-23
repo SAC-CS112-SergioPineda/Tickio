@@ -41,9 +41,10 @@ public class LoginController {
         Optional<UserEntity> user = userService.getUserByUsername(loginForm.getUsername());
 
         if (user.isPresent() && user.get().getPassword().equals(loginForm.getPassword())) {
-            session.setAttribute("userId", user.get().getId()); // Store user ID in session
-            session.setAttribute("username", user.get().getUsername()); // Store username in session
-            return "redirect:/dashboard"; // Redirect to user dashboard
+            session.setAttribute("userId", user.get().getId());
+            session.setAttribute("username", user.get().getUsername());
+            session.setAttribute("role", user.get().getRole());  // Save role in session
+            return "redirect:/dashboard";
         }
 
         model.addAttribute("error", "Invalid username or password.");

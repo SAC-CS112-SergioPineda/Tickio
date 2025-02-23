@@ -1,6 +1,7 @@
 package com.tickio.data.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
@@ -13,6 +14,9 @@ public class TicketEntity {
 
     @Column("USER_ID") // Link to the user who created the ticket
     private Long userId;
+    
+    @Transient // manually fetch UserEntity
+    private UserEntity user;
 
     @Column("TITLE")
     private String title;
