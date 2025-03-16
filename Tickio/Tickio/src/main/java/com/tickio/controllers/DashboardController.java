@@ -5,18 +5,37 @@ import com.tickio.services.TicketService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * Controller responsible for handling the dashboard view of the Tickio application.
+ * It retrieves and displays user-specific ticket data based on their session.
+ */
 @Controller
 public class DashboardController {
 
     private final TicketService ticketService;
 
+    /**
+     * Constructor to initialize the DashboardController with a TicketService dependency.
+     *
+     * @param ticketService The service used to retrieve user tickets.
+     */
     public DashboardController(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
+    /**
+     * Handles GET requests for the dashboard page.
+     * Retrieves ticket statistics for the logged-in user and adds them to the model.
+     * Redirects to the login page if the user is not authenticated.
+     *
+     * @param session The HttpSession object used to retrieve the logged-in user's information.
+     * @param model   The Model object to pass attributes to the Thymeleaf template.
+     * @return The dashboard view template name or a redirection to the login page.
+     */
     @GetMapping("/dashboard")
     public String showDashboard(HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("userId");

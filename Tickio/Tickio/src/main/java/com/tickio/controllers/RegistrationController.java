@@ -11,26 +11,45 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 
+/**
+ * Controller for handling user registration.
+ */
 @Controller
 public class RegistrationController {
 
     private final UserService userService;
 
+    /**
+     * Constructs a RegistrationController with the specified UserService.
+     *
+     * @param userService The service used to handle user registration.
+     */
     public RegistrationController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Displays the registration form.
+     *
+     * @param model The model to hold the user form data.
+     * @return The name of the registration view (register.html).
+     */
     @GetMapping("/register")
-    public String showRegisterForm(Model model) 
-    {
+    public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
-        return "register"; // Renders register.html
+        return "register";
     }
 
+    /**
+     * Handles user registration form submission.
+     *
+     * @param user The user object containing registration details.
+     * @param result The result of form validation.
+     * @return Redirects to the login page on success, or reloads the registration page on failure.
+     */
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("user") User user,
-                           BindingResult result) 
-    {
+                           BindingResult result) {
         if (result.hasErrors()) {
             return "register";
         }
@@ -38,8 +57,7 @@ public class RegistrationController {
         boolean success = userService.registerUser(user.getFirstName(), user.getLastName(), user.getEmail(),
                 user.getPhone(), user.getUsername(), user.getPassword());
 
-        if (!success) 
-        {
+        if (!success) {
             result.rejectValue("username", "error.user", "Username or email already taken.");
             return "register";
         }

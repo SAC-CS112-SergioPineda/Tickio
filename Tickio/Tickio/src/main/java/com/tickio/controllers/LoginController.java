@@ -14,23 +14,44 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Optional;
 
+/**
+ * Controller for handling user authentication, including login and logout.
+ */
 @Controller
 public class LoginController {
 
     private final UserService userService;
 
+    /**
+     * Constructs a LoginController with the specified UserService.
+     *
+     * @param userService The service used to manage user authentication.
+     */
     public LoginController(UserService userService) {
         this.userService = userService;
     }
 
-    // Display login form
+    /**
+     * Displays the login form.
+     *
+     * @param model The model to hold form data.
+     * @return The name of the login view (login.html).
+     */
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         model.addAttribute("loginForm", new LoginForm());
-        return "login"; // Loads login.html
+        return "login";
     }
 
-    // Handle login submission
+    /**
+     * Handles login form submission and authentication.
+     *
+     * @param loginForm The login form containing user credentials.
+     * @param result The result of form validation.
+     * @param session The HTTP session to store user data upon successful login.
+     * @param model The model to hold error messages if login fails.
+     * @return Redirects to the dashboard on success, or reloads the login page on failure.
+     */
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
                         BindingResult result, HttpSession session, Model model) {
@@ -51,10 +72,15 @@ public class LoginController {
         return "login";
     }
 
-    // Handle user logout
+    /**
+     * Handles user logout by invalidating the session.
+     *
+     * @param session The HTTP session to be invalidated.
+     * @return Redirects to the home page after logout.
+     */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // Destroy session
-        return "redirect:/"; // Redirect to login page
+        session.invalidate();
+        return "redirect:/";
     }
 }

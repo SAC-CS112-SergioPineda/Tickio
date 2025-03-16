@@ -8,106 +8,154 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for managing tickets.
+ * Provides endpoints for creating, updating, deleting, and viewing tickets.
+ */
 @Controller
-@RequestMapping("/tickets")  // ✅ This ensures all endpoints start with /tickets
+@RequestMapping("/tickets") 
 public class TicketController {
 
     private final TicketService ticketService;
 
+    /**
+     * Constructs a TicketController with the specified TicketService.
+     *
+     * @param ticketService The service used to manage tickets.
+     */
     public TicketController(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
-    //  List all tickets for the logged-in user
+    /**
+     * Lists all tickets for the logged-in user.
+     * Admin users see all tickets, while regular users see only their own.
+     *
+     * @param session The HTTP session containing user authentication data.
+     * @param model   The model to store ticket data.
+     * @return The view name for displaying tickets.
+     */
     @GetMapping
     public String listUserTickets(HttpSession session, Model model) {
-    	Long userId = (Long) session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
             return "redirect:/login"; // Redirect if not logged in
         }
-        
+
         String role = (String) session.getAttribute("role");
         List<TicketEntity> tickets;
-        
-        // If admin, show all tickets; otherwise, only the user's tickets.
+
         if ("ADMIN".equalsIgnoreCase(role)) {
             tickets = ticketService.getAllTickets();
         } else {
             tickets = ticketService.getUserTickets(userId);
         }
-        
+
         model.addAttribute("tickets", tickets);
-        return "tickets"; // This view renders the tickets page
+        return "tickets";
     }
 
-
-    //  Display the "Create Ticket" form
+    /**
+     * Displays the "Create Ticket" form.
+     *
+     * @param model The model to hold the ticket form data.
+     * @return The view name for the ticket creation form.
+     */
     @GetMapping("/new")
     public String showCreateTicketForm(Model model) {
         model.addAttribute("ticket", new TicketEntity());
-        return "create_ticket"; // Ensure this matches create_ticket.html
+        return "create_ticket";
     }
 
-    // Handle form submission for creating a ticket
+    /**
+     * Handles form submission for creating a new ticket.
+     *
+     * @param ticket  The ticket entity containing user inputs.
+     * @param session The HTTP session containing user authentication data.
+     * @return Redirects to the ticket list after successful creation.
+     */
     @PostMapping
     public String createTicket(@ModelAttribute TicketEntity ticket, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) return "redirect:/login";
 
-        ticket.setUserId(userId); // Set user ID manually
+        ticket.setUserId(userId);
         ticketService.createTicket(ticket.getUserId(), ticket.getTitle(), ticket.getDescription(), ticket.getPriority());
-        
+
         return "redirect:/tickets";
     }
-    
-    // Show edit form
+
+    /**
+     * Displays the edit form for a specific ticket.
+     *
+     * @param id    The ID of the ticket to edit.
+     * @param model The model to store ticket data.
+     * @return The view name for the ticket edit form.
+     */
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model)
-    {
-    	TicketEntity ticket = ticketService.findById(id);
-    	if (ticket == null) return "redirect:/tickets"; // handle invalid id
-    	
-    	model.addAttribute("ticket", ticket);
-    	return "edit_ticket"; 
+    public String showEditForm(@PathVariable Long id, Model model) {
+        TicketEntity ticket = ticketService.findById(id);
+        if (ticket == null) return "redirect:/tickets";
+
+        model.addAttribute("ticket", ticket);
+        return "edit_ticket";
     }
-    
-    // Handle ticket update
+
+    /**
+     * Handles ticket updates.
+     * Admin users can modify any field, while regular users cannot change the status.
+     *
+     * @param ticket            The updated ticket entity.
+     * @param redirectAttributes Attributes for redirecting with messages.
+     * @param session           The HTTP session containing user role data.
+     * @return Redirects to the ticket list after updating.
+     */
     @PostMapping("/update")
     public String updateTicket(@ModelAttribute TicketEntity ticket,
                                RedirectAttributes redirectAttributes,
                                HttpSession session) {
         String role = (String) session.getAttribute("role");
         if (!"ADMIN".equalsIgnoreCase(role)) {
-            // Re-fetch the original ticket and preserve its status
             TicketEntity originalTicket = ticketService.findById(ticket.getId());
             if (originalTicket != null) {
                 ticket.setStatus(originalTicket.getStatus());
             }
         }
+
         ticketService.updateTicket(ticket);
         redirectAttributes.addFlashAttribute("message", "Ticket #" + ticket.getId() + " has been updated.");
         return "redirect:/tickets";
     }
 
-    
-    // Handle ticket deletion
+    /**
+     * Handles ticket deletion.
+     * Only admins can delete tickets.
+     *
+     * @param id      The ID of the ticket to delete.
+     * @param session The HTTP session containing user role data.
+     * @return Redirects to the ticket list after deletion.
+     */
     @GetMapping("/delete/{id}")
     public String deleteTicket(@PathVariable Long id, HttpSession session) {
         String role = (String) session.getAttribute("role");
         if (!"ADMIN".equalsIgnoreCase(role)) {
-            
             return "redirect:/tickets";
         }
         ticketService.deleteTicket(id);
         return "redirect:/tickets";
     }
 
-    
-    
+    /**
+     * Displays details for a specific ticket.
+     * Admin users can view any ticket, while regular users can only view their own.
+     *
+     * @param id      The ID of the ticket.
+     * @param session The HTTP session containing user authentication data.
+     * @param model   The model to store ticket data.
+     * @return The view name for displaying ticket details.
+     */
     @GetMapping("/{id}")
     public String viewTicketDetails(@PathVariable Long id, HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("userId");
@@ -118,11 +166,9 @@ public class TicketController {
         String role = (String) session.getAttribute("role");
         TicketEntity ticket;
 
-        // If the user is an admin, allow them to view any ticket
         if ("ADMIN".equalsIgnoreCase(role)) {
             ticket = ticketService.findById(id);
         } else {
-            // If not an admin, ensure the ticket belongs to the logged-in user
             ticket = ticketService.findById(id);
             if (ticket == null || !ticket.getUserId().equals(userId)) {
                 return "redirect:/tickets"; // Access denied
@@ -130,11 +176,6 @@ public class TicketController {
         }
 
         model.addAttribute("ticket", ticket);
-        return "ticket_details"; 
+        return "ticket_details";
     }
-
-    
-
-    
-    
 }
