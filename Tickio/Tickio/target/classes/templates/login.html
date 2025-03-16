@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="layout :: layout('Tickio - Login')">
+    <!-- Content fragment that Thymeleaf uses to insert dynamic content -->
+    <div th:fragment="content">
+        <!-- Container that centers the form vertically and horizontally using Bootstrap utility classes -->
+        <div class="container d-flex justify-content-center align-items-center vh-100">
+            <!-- Card component from Bootstrap to house the form, adding shadow and custom width -->
+            <div class="card shadow-lg" style="max-width: 400px; width: 100%;">
+                <!-- Card header with background color and white text, centered content -->
+                <div class="card-header text-center bg-primary text-white">
+                    <!-- Title of the Login page -->
+                    <h2>Login</h2>
+                </div>
+                <!-- Card body where the form is placed -->
+                <div class="card-body">
+					
+                    <!-- Form to handle user login, submits to /login endpoint -->
+                    <form th:action="@{/login}" th:object="${loginForm}" method="post">
+						<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+						
+                        <!-- Username input field -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" th:field="*{username}" class="form-control" id="username" required>
+							
+                            <!-- Display error messages if any validation error occurs for the username field -->
+                            <div th:if="${#fields.hasErrors('username')}" class="text-danger" th:errors="*{username}"></div>
+                        </div>
+						
+                        <!-- Password input field -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" th:field="*{password}" class="form-control" id="password" required>
+							
+                            <!-- Display error messages if any validation error occurs for the password field -->
+                            <div th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}"></div>
+                        </div>
+						
+                        <!-- Submit button, Bootstrap's grid utility for a full-width button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+				
+                <!-- Card footer with a text link to the registration page -->
+                <div class="card-footer text-center">
+                    <small class="text-muted">Not signed up? <a href="/register">Create an account here</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

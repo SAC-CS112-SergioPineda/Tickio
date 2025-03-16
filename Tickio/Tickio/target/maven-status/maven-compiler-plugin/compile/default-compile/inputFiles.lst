@@ -1,0 +1,16 @@
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\controllers\DashboardController.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\models\Ticket.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\models\LoginForm.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\controllers\LoginController.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\models\User.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\services\AuthenticationService.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\controllers\HomeController.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\controllers\RegistrationController.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\controllers\TicketController.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\data\entity\UserEntity.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\data\repository\UserRepository.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\data\entity\TicketEntity.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\services\TicketService.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\data\repository\TicketRepository.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\TickioApplication.java
+C:\Users\Sergi\Documents\workspace-spring-tool-suite-4-4.27.0.RELEASE\Tickio\src\main\java\com\tickio\services\UserService.java

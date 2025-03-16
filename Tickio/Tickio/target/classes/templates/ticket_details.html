@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout('Tickio - Ticket Details')">
+    <div th:fragment="content">
+        <div class="container mt-4">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>Ticket Details</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>ID:</strong> <span th:text="${ticket.id}"></span></p>
+                    <p><strong>Title:</strong> <span th:text="${ticket.title}"></span></p>
+                    <p><strong>Description:</strong> <span th:text="${ticket.description}"></span></p>
+                    <p><strong>Priority:</strong> <span th:text="${ticket.priority}"></span></p>
+                    <p><strong>Status:</strong> <span th:text="${ticket.status}"></span></p>
+                    <p>
+                      <strong>Date Submitted:</strong>
+					  <span th:text="${#temporals.format(ticket.dateSubmitted, 'yyyy-MM-dd HH:mm')}"></span>
+                    </p>
+                </div>
+                <div class="card-footer text-center">
+                    <!-- Edit button linking to the edit form for this ticket -->
+                    <a th:href="@{/tickets/edit/{id}(id=${ticket.id})}" class="btn btn-warning">Edit Ticket</a>
+                    <a href="/tickets" class="btn btn-secondary">Back to Tickets</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>
